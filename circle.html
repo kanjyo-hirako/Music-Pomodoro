@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Pomodoro - Audio Wave</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        font-size: 1vmin;
+    }
+
+    div {
+        display: flex;
+    }
+
+    body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100vh;
+        background-color: #f5f0e8;
+        background-image:
+            radial-gradient(ellipse at 20% 50%, rgba(255,252,245,0.8) 0%, transparent 50%),
+            radial-gradient(ellipse at 80% 50%, rgba(245,238,225,0.6) 0%, transparent 50%),
+            linear-gradient(180deg, #f8f3eb 0%, #f0ead8 50%, #ebe5d5 100%);
+    }
+
+    .line {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        justify-content: center;
+        align-items: start;
+        width: 50rem;
+        height: 50rem;
+        transform-origin: center center;
+        opacity: 0;
+        transition: opacity 0.8s ease-out, transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .line.visible {
+        opacity: 1;
+    }
+
+    .line::after {
+        content: "";
+        position: relative;
+        width: 0.2rem;
+        height: 8rem;
+        background-color: #000;
+        transform: scale(var(--s));
+        transition: transform 0.15s ease;
+    }
+
+    #start-btn {
+        position: fixed;
+        z-index: 10;
+        width: 15rem;
+        height: 15rem;
+        font-size: 2.6rem;
+        font-weight: 600;
+        letter-spacing: 0.4rem;
+        color: #3a3028;
+        background: linear-gradient(180deg, #faf6ef 0%, #f0ead8 100%);
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        opacity: 1;
+        /* Slower transitions for realistic button feel */
+        transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.6s ease;
+        /* 3D cylinder effect - multiple shadows for depth */
+        box-shadow:
+            0 0.8rem 0 #8a7e6e,
+            0 1rem 0 #7a6e5e,
+            0 1.2rem 0 #6a5e4e,
+            0 1.4rem 0.6rem rgba(100,80,60,0.15),
+            0 2rem 2rem rgba(100,80,60,0.1),
+            inset 0 1rem 1.5rem rgba(255,255,250,0.6),
+            inset 0 -0.8rem 1.2rem rgba(100,80,60,0.08);
+    }
+
+    #start-btn:hover {
+        transform: translateY(-1.5rem) scale(1.06);
+        /* Elevated cylinder shadow */
+        box-shadow:
+            0 1.5rem 0 #8a7e6e,
+            0 1.7rem 0 #7a6e5e,
+            0 1.9rem 0 #6a5e4e,
+            0 2.1rem 1rem rgba(100,80,60,0.2),
+            0 3rem 3rem rgba(100,80,60,0.15),
+            inset 0 1rem 1.5rem rgba(255,255,250,0.7),
+            inset 0 -0.8rem 1.2rem rgba(100,80,60,0.06);
+    }
+
+    #start-btn:active,
+    #start-btn.pressing {
+        transform: translateY(0.6rem) scale(0.97);
+        transition: transform 0.3s cubic-bezier(0.34, 1, 0.64, 1), box-shadow 0.3s ease;
+        /* Pressed cylinder - flush with surface */
+        box-shadow:
+            0 0.2rem 0 #8a7e6e,
+            0 0.3rem 0 #7a6e5e,
+            0 0.4rem 0 #6a5e4e,
+            0 0.5rem 0.2rem rgba(100,80,60,0.1),
+            inset 0 0.5rem 1rem rgba(255,255,250,0.4),
+            inset 0 -0.3rem 0.8rem rgba(100,80,60,0.1);
+    }
+
+    #start-btn.fade-out {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.6s ease-out, transform 0.6s ease-in-out;
+        transform: scale(0.5);
+    }
+
+    @keyframes breathe {
+        0%, 100% {
+            opacity: 0.85;
+        }
+        50% {
+            opacity: 1;
+        }
+    }
+
+    .line.visible {
+        animation: breathe 4s ease-in-out infinite;
+    }
+
+    #status {
+        position: fixed;
+        bottom: 3rem;
+        color: #6a5e4e;
+        font-size: 1.5rem;
+        font-family: monospace;
+        text-align: center;
+    }
+
+    /* Pomodoro Timer Styles */
+    .timer-container {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 5;
+        text-align: center;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 0.8s ease-in;
+    }
+
+    .timer-container.visible {
+        opacity: 1;
+    }
+
+    .timer-display {
+        font-family: 'Arial Black', 'Impact', 'Haettenschweiler', sans-serif;
+        font-weight: 900;
+        font-size: 8rem;
+        color: #3a3028;
+        letter-spacing: 0.3rem;
+        text-shadow:
+            3px 3px 0 #d5c9b8,
+            6px 6px 0 rgba(100,80,60,0.15),
+            0 0 20px rgba(100,80,60,0.1);
+        line-height: 1;
+        margin-bottom: 2rem;
+    }
+
+    .timer-label {
+        font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+        font-style: italic;
+        font-weight: 400;
+        font-size: 2.4rem;
+        color: #6a5e4e;
+        letter-spacing: 0.8rem;
+        text-transform: uppercase;
+    }
+
+    .timer-controls {
+        position: fixed;
+        bottom: 8rem;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 3rem;
+        z-index: 15;
+        pointer-events: auto;
+        opacity: 0;
+        transition: opacity 0.5s ease;
+    }
+
+    .timer-controls.visible {
+        opacity: 1;
+    }
+
+    .timer-btn {
+        font-family: 'Cormorant Garamond', 'Playfair Display', Georgia, serif;
+        font-style: italic;
+        font-weight: 500;
+        font-size: 1.8rem;
+        padding: 1.2rem 2.5rem;
+        color: #3a3028;
+        background: rgba(250,246,239,0.95);
+        border: 0.2rem solid #d5c9b8;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        letter-spacing: 0.3rem;
+    }
+
+    .timer-btn:hover {
+        background: #f0ead8;
+        border-color: #8a7e6e;
+        transform: translateY(-0.3rem);
+        box-shadow: 0 0.5rem 1rem rgba(100,80,60,0.15);
+    }
+
+    .timer-btn:active {
+        transform: translateY(0.1rem);
+        box-shadow: none;
+    }
+
+    /* Paper grain texture overlay */
+    body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+        pointer-events: none;
+        z-index: 100;
+        mix-blend-mode: multiply;
+    }
+</style>
+
+<body>
+    <button id="start-btn">开始</button>
+
+    <!-- Pomodoro Timer Display -->
+    <div class="timer-container" id="timer-container">
+        <div class="timer-display" id="timer-display">25:00</div>
+        <div class="timer-label">Focus Time</div>
+    </div>
+
+    <!-- Timer Controls -->
+    <div class="timer-controls" id="timer-controls">
+        <button class="timer-btn" id="timer-start">Start</button>
+        <button class="timer-btn" id="timer-pause">Pause</button>
+        <button class="timer-btn" id="timer-reset">Reset</button>
+    </div>
+
+    <div id="status"></div>
+</body>
+<script>
+    const audio_wave = {
+        lines_total: 200,
+        lines: [],
+        analyser: null,
+        data_array: null,
+        audio_ctx: null,
+        anim_id: null,
+        stream: null,
+
+        async init() {
+            const btn = document.getElementById("start-btn");
+
+            for (let i = 0; i < this.lines_total; i++) {
+                const angle = 360 / this.lines_total * i;
+                const line = document.createElement("div");
+                line.className = "line";
+                line.style.setProperty("--s", 0);
+                line.dataset.angle = angle;
+                line.dataset.index = i;
+                // Set initial transform with rotate for proper interpolation
+                line.style.transform = `translate(-50%, -50%) rotate(${angle}deg) scale(0)`;
+                document.body.appendChild(line);
+                this.lines.push(line);
+            }
+
+            btn.onclick = () => this.start_capture();
+        },
+
+        async start_capture() {
+            const btn = document.getElementById("start-btn");
+            const status = document.getElementById("status");
+
+            // If we already have a stream, just restart visualization
+            if (this.stream && this.stream.active) {
+                btn.classList.add("fade-out");
+                await new Promise(resolve => setTimeout(resolve, 600));
+                this.animate_lines_in();
+                status.textContent = "listening...";
+                return;
+            }
+
+            try {
+                // Step 1: Request audio first (this shows the browser prompt)
+                status.textContent = "please select a window/tab and enable audio sharing...";
+
+                this.stream = await navigator.mediaDevices.getDisplayMedia({
+                    video: true,
+                    audio: true
+                });
+
+                const audio_track = this.stream.getAudioTracks()[0];
+                if (!audio_track) {
+                    status.textContent = "no audio track detected, please enable audio sharing";
+                    return;
+                }
+
+                // Step 2: Button fade out after selection
+                btn.classList.add("fade-out");
+
+                // Step 3: Wait for button to disappear
+                await new Promise(resolve => setTimeout(resolve, 600));
+
+                // Step 4: Animate lines expanding from center
+                this.animate_lines_in();
+
+                // Step 5: Setup audio context
+                this.audio_ctx = new AudioContext();
+                const source = this.audio_ctx.createMediaStreamSource(
+                    new MediaStream([audio_track])
+                );
+
+                this.analyser = this.audio_ctx.createAnalyser();
+                this.analyser.fftSize = 512;
+                this.analyser.smoothingTimeConstant = 0.8;
+                source.connect(this.analyser);
+
+                this.data_array = new Uint8Array(this.analyser.frequencyBinCount);
+                status.textContent = "listening...";
+                this.run();
+
+                audio_track.onended = () => {
+                    cancelAnimationFrame(this.anim_id);
+                    status.textContent = "audio stopped";
+                    btn.classList.remove("fade-out");
+                    this.stream = null;
+                    // Hide timer and controls
+                    document.getElementById('timer-container').classList.remove('visible');
+                    document.getElementById('timer-controls').classList.remove('visible');
+                    // Reset lines
+                    this.lines.forEach(line => {
+                        line.classList.remove("visible");
+                        line.style.transform = `translate(-50%, -50%) rotate(${line.dataset.angle}deg) scale(0)`;
+                    });
+                };
+            } catch (e) {
+                status.textContent = "failed: " + e.message;
+                btn.classList.remove("fade-out");
+            }
+        },
+
+        animate_lines_in() {
+            this.lines.forEach((line, i) => {
+                const angle = parseFloat(line.dataset.angle);
+                // Staggered animation
+                setTimeout(() => {
+                    line.classList.add("visible");
+                    line.style.transform = `translate(-50%, -50%) rotate(${angle}deg) scale(1)`;
+                }, i * 15);
+            });
+
+            // Show timer and controls after animation
+            setTimeout(() => {
+                document.getElementById('timer-container').classList.add('visible');
+                document.getElementById('timer-controls').classList.add('visible');
+            }, this.lines_total * 15 + 500);
+        },
+
+        run() {
+            const loop = () => {
+                this.analyser.getByteTimeDomainData(this.data_array);
+                const bin_count = this.data_array.length;
+
+                for (let i = 0; i < this.lines_total; i++) {
+                    const bin_index = Math.floor(i / this.lines_total * bin_count);
+                    const value = Math.abs(this.data_array[bin_index] - 128) / 128 * 3;
+                    this.lines[i].style.setProperty("--s", value);
+                }
+
+                this.anim_id = requestAnimationFrame(loop);
+            };
+            loop();
+        }
+    };
+    audio_wave.init();
+
+    // Pomodoro Timer
+    const pomodoro = {
+        duration: 25 * 60, // 25 minutes in seconds
+        remaining: 25 * 60,
+        interval: null,
+        isRunning: false,
+
+        init() {
+            this.display = document.getElementById('timer-display');
+            this.controls = document.getElementById('timer-controls');
+            this.container = document.getElementById('timer-container');
+
+            document.getElementById('timer-start').onclick = () => this.start();
+            document.getElementById('timer-pause').onclick = () => this.pause();
+            document.getElementById('timer-reset').onclick = () => this.reset();
+
+            this.updateDisplay();
+        },
+
+        start() {
+            if (this.isRunning) return;
+            this.isRunning = true;
+            this.controls.classList.add('visible');
+
+            this.interval = setInterval(() => {
+                this.remaining--;
+                this.updateDisplay();
+
+                if (this.remaining <= 0) {
+                    this.complete();
+                }
+            }, 1000);
+        },
+
+        pause() {
+            this.isRunning = false;
+            clearInterval(this.interval);
+        },
+
+        reset() {
+            this.pause();
+            this.remaining = this.duration;
+            this.updateDisplay();
+        },
+
+        complete() {
+            this.pause();
+            // Flash effect
+            this.display.style.color = '#8b4513';
+            setTimeout(() => {
+                this.display.style.color = '#3a3028';
+            }, 2000);
+        },
+
+        updateDisplay() {
+            const minutes = Math.floor(this.remaining / 60);
+            const seconds = this.remaining % 60;
+            this.display.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+    };
+
+    pomodoro.init();
+</script>
+
+</html>
