@@ -41,6 +41,7 @@
         height: 50rem;
         transform-origin: center center;
         opacity: 0;
+        z-index: 5;
         transition: opacity 0.8s ease-out, transform 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
 
@@ -58,67 +59,6 @@
         transition: transform 0.15s ease;
     }
 
-    #start-btn {
-        position: fixed;
-        z-index: 10;
-        width: 15rem;
-        height: 15rem;
-        font-size: 2.6rem;
-        font-weight: 600;
-        letter-spacing: 0.4rem;
-        color: #3a3028;
-        background: linear-gradient(180deg, #faf6ef 0%, #f0ead8 100%);
-        border: none;
-        border-radius: 50%;
-        cursor: pointer;
-        opacity: 1;
-        /* Slower transitions for realistic button feel */
-        transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.6s ease;
-        /* 3D cylinder effect - multiple shadows for depth */
-        box-shadow:
-            0 0.8rem 0 #8a7e6e,
-            0 1rem 0 #7a6e5e,
-            0 1.2rem 0 #6a5e4e,
-            0 1.4rem 0.6rem rgba(100,80,60,0.15),
-            0 2rem 2rem rgba(100,80,60,0.1),
-            inset 0 1rem 1.5rem rgba(255,255,250,0.6),
-            inset 0 -0.8rem 1.2rem rgba(100,80,60,0.08);
-    }
-
-    #start-btn:hover {
-        transform: translateY(-1.5rem) scale(1.06);
-        /* Elevated cylinder shadow */
-        box-shadow:
-            0 1.5rem 0 #8a7e6e,
-            0 1.7rem 0 #7a6e5e,
-            0 1.9rem 0 #6a5e4e,
-            0 2.1rem 1rem rgba(100,80,60,0.2),
-            0 3rem 3rem rgba(100,80,60,0.15),
-            inset 0 1rem 1.5rem rgba(255,255,250,0.7),
-            inset 0 -0.8rem 1.2rem rgba(100,80,60,0.06);
-    }
-
-    #start-btn:active,
-    #start-btn.pressing {
-        transform: translateY(0.6rem) scale(0.97);
-        transition: transform 0.3s cubic-bezier(0.34, 1, 0.64, 1), box-shadow 0.3s ease;
-        /* Pressed cylinder - flush with surface */
-        box-shadow:
-            0 0.2rem 0 #8a7e6e,
-            0 0.3rem 0 #7a6e5e,
-            0 0.4rem 0 #6a5e4e,
-            0 0.5rem 0.2rem rgba(100,80,60,0.1),
-            inset 0 0.5rem 1rem rgba(255,255,250,0.4),
-            inset 0 -0.3rem 0.8rem rgba(100,80,60,0.1);
-    }
-
-    #start-btn.fade-out {
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.6s ease-out, transform 0.6s ease-in-out;
-        transform: scale(0.5);
-    }
-
     @keyframes breathe {
         0%, 100% {
             opacity: 0.85;
@@ -132,6 +72,92 @@
         animation: breathe 4s ease-in-out infinite;
     }
 
+    /* ========== Animated Blob Background (from lab-display-screen) ========== */
+    .noise {
+        position: fixed;
+        inset: 0;
+        opacity: 0.25;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+        background-size: 200px 200px;
+        pointer-events: none;
+        z-index: 20;
+        mix-blend-mode: multiply;
+    }
+
+    .blobs {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+        pointer-events: none;
+    }
+
+    .shape {
+        animation-timing-function: ease-in-out;
+        animation-iteration-count: infinite;
+    }
+
+    .shape-1 {
+        animation: morph1 14s infinite;
+    }
+    .shape-2 {
+        animation: morph2 12s infinite;
+    }
+    .shape-3 {
+        animation: morph3 16s infinite;
+    }
+    .shape-4 {
+        animation: pulse 10s infinite;
+    }
+
+    @keyframes morph1 {
+        0%, 100% {
+            transform: translate(0, 0) scale(1) rotate(0deg);
+        }
+        25% {
+            transform: translate(20px, -15px) scale(1.04) rotate(2deg);
+        }
+        50% {
+            transform: translate(-10px, 20px) scale(0.97) rotate(-1deg);
+        }
+        75% {
+            transform: translate(15px, 10px) scale(1.02) rotate(1deg);
+        }
+    }
+
+    @keyframes morph2 {
+        0%, 100% {
+            transform: translate(0, 0) scale(1) rotate(0deg);
+        }
+        33% {
+            transform: translate(-25px, 15px) scale(1.05) rotate(-2deg);
+        }
+        66% {
+            transform: translate(15px, -20px) scale(0.96) rotate(2deg);
+        }
+    }
+
+    @keyframes morph3 {
+        0%, 100% {
+            transform: translate(0, 0) scale(1) rotate(0deg);
+        }
+        50% {
+            transform: translate(20px, 15px) scale(1.06) rotate(-2deg);
+        }
+    }
+
+    @keyframes pulse {
+        0%, 100% {
+            opacity: 0.3;
+            transform: scale(1);
+        }
+        50% {
+            opacity: 0.45;
+            transform: scale(1.06);
+        }
+    }
+
     #status {
         position: fixed;
         bottom: 3rem;
@@ -139,6 +165,7 @@
         font-size: 1.5rem;
         font-family: monospace;
         text-align: center;
+        z-index: 10;
     }
 
     /* Pomodoro Timer Styles */
@@ -226,23 +253,396 @@
         box-shadow: none;
     }
 
-    /* Paper grain texture overlay */
-    body::before {
-        content: "";
+    /* Paper grain texture overlay — now handled by .noise-overlay div */
+
+    /* ========== Welcome Overlay ========== */
+    .welcome-overlay {
         position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-        pointer-events: none;
+        inset: 0;
         z-index: 100;
-        mix-blend-mode: multiply;
+        display: flex;
+        cursor: pointer;
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        transition: opacity 0.9s cubic-bezier(0.4, 0, 1, 1),
+                    transform 0.9s cubic-bezier(0.4, 0, 1, 1);
+    }
+
+    .welcome-overlay.exiting {
+        opacity: 0;
+        transform: scale(1.03);
+        pointer-events: none;
+    }
+
+    .welcome-overlay.hidden {
+        display: none;
+    }
+
+    /* ── Left half: text ── */
+    .welcome-left {
+        position: relative;
+        width: 50vw;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 0 3.5rem 0 4.5rem;
+        padding-bottom: 12vh;
+        z-index: 10;
+    }
+
+    .welcome-eyebrow {
+        font-size: 12px;
+        letter-spacing: 0.42em;
+        text-transform: uppercase;
+        color: rgba(100, 85, 65, 0.55);
+        font-style: normal;
+        font-weight: 400;
+        margin-bottom: 1.2rem;
+        opacity: 0;
+        transform: translateY(12px);
+        transition: opacity 0.9s 0.6s ease, transform 0.9s 0.6s ease;
+    }
+
+    .welcome-eyebrow.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .welcome-title {
+        font-size: clamp(56px, 7.5vw, 108px);
+        font-weight: 300;
+        font-style: italic;
+        color: rgba(50, 42, 34, 0.94);
+        line-height: 1.0;
+        letter-spacing: -0.01em;
+        margin-bottom: 1.6rem;
+        opacity: 0;
+        transform: translateY(18px);
+        transition: opacity 1s 0.8s ease, transform 1s 0.8s ease;
+    }
+
+    .welcome-title.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .welcome-subtitle {
+        font-size: 13px;
+        font-weight: 300;
+        font-style: normal;
+        color: rgba(100, 85, 65, 0.4);
+        letter-spacing: 0.2em;
+        text-transform: uppercase;
+        margin-bottom: 2.4rem;
+        opacity: 0;
+        transform: translateY(12px);
+        transition: opacity 0.9s 1s ease, transform 0.9s 1s ease;
+    }
+
+        .welcome-subtitle.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .welcome-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 14px;
+        font-size: 12px;
+        letter-spacing: 0.32em;
+        text-transform: uppercase;
+        color: rgba(80, 68, 52, 0.65);
+        font-style: normal;
+        font-weight: 400;
+        opacity: 0;
+        transform: translateY(10px);
+        transition: opacity 0.9s 1.2s ease, transform 0.9s 1.2s ease;
+    }
+
+    .welcome-cta.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .welcome-cta-line {
+        display: block;
+        width: 36px;
+        height: 0.5px;
+        background: rgba(100, 85, 65, 0.3);
+        transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .welcome-overlay:hover .welcome-cta-line {
+        width: 60px;
+    }
+
+    /* Badge in top-left */
+    .welcome-badge {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 11px;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        color: rgba(90, 78, 62, 0.55);
+        border: 0.5px solid rgba(100, 85, 65, 0.15);
+        padding: 6px 14px;
+        border-radius: 2px;
+        font-style: normal;
+        position: absolute;
+        top: 2rem;
+        left: 4.5rem;
+        opacity: 0;
+        transform: translateY(-6px);
+        transition: opacity 0.9s 0.4s ease, transform 0.9s 0.4s ease;
+    }
+
+    .welcome-badge.visible {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    .welcome-dot {
+        width: 5px;
+        height: 5px;
+        border-radius: 50%;
+        background: rgba(140, 110, 70, 0.65);
+        animation: wp-dot-pulse 2.4s ease-in-out infinite;
+        flex-shrink: 0;
+    }
+
+    @keyframes wp-dot-pulse {
+        0%, 100% { opacity: 1;   transform: scale(1); }
+        50%       { opacity: 0.2; transform: scale(0.65); }
+    }
+
+    /* ── Right half: image ── */
+    .welcome-right {
+        position: relative;
+        width: 50vw;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+    }
+
+    .welcome-img {
+        max-width: 48vw;
+        max-height: 88vh;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        opacity: 0;
+        filter: saturate(0.82) brightness(0.88) contrast(1.02);
+        transform: scale(1.04);
+        /* Elliptical feathered edges blend into background */
+        -webkit-mask-image: radial-gradient(
+            ellipse 54% 56% at 50% 48%,
+            black 0%, black 50%,
+            rgba(0,0,0,0.55) 68%,
+            rgba(0,0,0,0.12) 84%,
+            transparent 100%
+        );
+        mask-image: radial-gradient(
+            ellipse 54% 56% at 50% 48%,
+            black 0%, black 50%,
+            rgba(0,0,0,0.55) 68%,
+            rgba(0,0,0,0.12) 84%,
+            transparent 100%
+        );
+        transition:
+            opacity 2.2s cubic-bezier(0.4, 0, 0.2, 1),
+            transform 14s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    }
+
+    .welcome-img.loaded {
+        opacity: 0.82;
+        transform: scale(1);
+    }
+
+    .welcome-overlay:hover .welcome-img.loaded {
+        transform: scale(1.015);
+    }
+
+    /* Warm glow behind image */
+    .welcome-glow {
+        position: absolute;
+        width: 40vw;
+        height: 60vh;
+        border-radius: 50%;
+        background: radial-gradient(
+            ellipse at center,
+            rgba(200, 180, 150, 0.15) 0%,
+            rgba(170, 150, 120, 0.06) 50%,
+            transparent 80%
+        );
+        filter: blur(50px);
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 2.5s 0.5s ease;
+    }
+
+    .welcome-glow.visible {
+        opacity: 1;
+    }
+
+    /* Divider line between left and right */
+    .welcome-divider {
+        position: absolute;
+        top: 15%;
+        bottom: 15%;
+        left: 50%;
+        width: 0.5px;
+        background: linear-gradient(
+            to bottom,
+            transparent 0%,
+            rgba(100, 85, 65, 0.12) 20%,
+            rgba(100, 85, 65, 0.18) 50%,
+            rgba(100, 85, 65, 0.12) 80%,
+            transparent 100%
+        );
+        z-index: 5;
+        pointer-events: none;
+        opacity: 0;
+        transition: opacity 1.2s 1s ease;
+    }
+
+    .welcome-divider.visible {
+        opacity: 1;
+    }
+
+    /* Corner label */
+    .welcome-corner {
+        position: absolute;
+        top: 2rem;
+        right: 2.5rem;
+        font-size: 11px;
+        letter-spacing: 0.22em;
+        text-transform: uppercase;
+        color: rgba(90, 78, 62, 0.35);
+        font-style: normal;
+        z-index: 10;
+        opacity: 0;
+        transition: opacity 0.9s 0.6s ease;
+    }
+
+    .welcome-corner.visible {
+        opacity: 1;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .welcome-img, .welcome-eyebrow, .welcome-title,
+        .welcome-subtitle, .welcome-cta, .welcome-badge,
+        .welcome-glow, .welcome-divider, .welcome-corner {
+            transition: none;
+        }
+        .welcome-img { opacity: 0.82; transform: scale(1); }
+        .welcome-eyebrow, .welcome-title, .welcome-subtitle,
+        .welcome-cta, .welcome-badge, .welcome-glow,
+        .welcome-divider, .welcome-corner {
+            opacity: 1; transform: none;
+        }
     }
 </style>
 
 <body>
-    <button id="start-btn">开始</button>
+    <!-- Noise texture -->
+    <div class="noise"></div>
+
+    <!-- Welcome overlay -->
+    <div class="welcome-overlay" id="welcome-overlay">
+        <div class="welcome-divider" id="welcome-divider"></div>
+
+        <!-- Left: text -->
+        <div class="welcome-left">
+            <div class="welcome-badge" id="welcome-badge">
+                <div class="welcome-dot"></div>
+                Music Pomodoro
+            </div>
+            <div class="welcome-eyebrow" id="welcome-eyebrow">find your rhythm</div>
+            <h1 class="welcome-title" id="welcome-title">A space to<br>focus &amp; breathe</h1>
+            <div class="welcome-subtitle" id="welcome-subtitle">click anywhere to begin</div>
+            <div class="welcome-cta" id="welcome-cta">
+                <span class="welcome-cta-line"></span>
+                Enter
+            </div>
+        </div>
+
+        <!-- Right: image -->
+        <div class="welcome-right">
+            <div class="welcome-glow" id="welcome-glow"></div>
+            <img class="welcome-img" id="welcome-img" src="picture1.jpg" alt="" draggable="false" />
+        </div>
+
+        <div class="welcome-corner" id="welcome-corner">Welcome</div>
+    </div>
+
+    <!-- Abstract blob shapes -->
+    <svg class="blobs" viewBox="0 0 1000 1333" preserveAspectRatio="xMidYMid slice">
+        <defs>
+            <filter id="softBlur">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="35" />
+            </filter>
+            <filter id="radialBlur">
+                <feGaussianBlur in="SourceGraphic" stdDeviation="20" />
+            </filter>
+            <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" style="stop-color:#0725b0;stop-opacity:0.6" />
+                <stop offset="100%" style="stop-color:#0a32d4;stop-opacity:0.2" />
+            </linearGradient>
+            <linearGradient id="grad2" x1="100%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" style="stop-color:#0725b0;stop-opacity:0.45" />
+                <stop offset="100%" style="stop-color:#051a80;stop-opacity:0.15" />
+            </linearGradient>
+            <linearGradient id="grad3" x1="50%" y1="0%" x2="50%" y2="100%">
+                <stop offset="0%" style="stop-color:#0a32d4;stop-opacity:0.5" />
+                <stop offset="100%" style="stop-color:#0725b0;stop-opacity:0.1" />
+            </linearGradient>
+            <radialGradient id="radGrad1" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" style="stop-color:#0725b0;stop-opacity:0.5" />
+                <stop offset="70%" style="stop-color:#0725b0;stop-opacity:0.15" />
+                <stop offset="100%" style="stop-color:#0725b0;stop-opacity:0" />
+            </radialGradient>
+        </defs>
+
+        <!-- Large organic blob - center left -->
+        <ellipse
+            cx="380" cy="550"
+            rx="320" ry="280"
+            fill="url(#grad1)"
+            filter="url(#softBlur)"
+            class="shape shape-1"
+        />
+
+        <!-- Medium blob - upper right -->
+        <ellipse
+            cx="700" cy="400"
+            rx="240" ry="220"
+            fill="url(#grad2)"
+            filter="url(#radialBlur)"
+            class="shape shape-2"
+        />
+
+        <!-- Smaller blob - lower right -->
+        <ellipse
+            cx="650" cy="850"
+            rx="200" ry="180"
+            fill="url(#radGrad1)"
+            filter="url(#softBlur)"
+            class="shape shape-3"
+        />
+
+        <!-- Soft radial glow - center -->
+        <circle
+            cx="500" cy="600"
+            r="350"
+            fill="url(#radGrad1)"
+            filter="url(#softBlur)"
+            opacity="0.3"
+            class="shape shape-4"
+        />
+    </svg>
 
     <!-- Pomodoro Timer Display -->
     <div class="timer-container" id="timer-container">
@@ -270,8 +670,6 @@
         stream: null,
 
         async init() {
-            const btn = document.getElementById("start-btn");
-
             for (let i = 0; i < this.lines_total; i++) {
                 const angle = 360 / this.lines_total * i;
                 const line = document.createElement("div");
@@ -285,24 +683,22 @@
                 this.lines.push(line);
             }
 
-            btn.onclick = () => this.start_capture();
+            // Click anywhere to start
+            document.body.onclick = () => this.start_capture();
         },
 
         async start_capture() {
-            const btn = document.getElementById("start-btn");
             const status = document.getElementById("status");
 
             // If we already have a stream, just restart visualization
             if (this.stream && this.stream.active) {
-                btn.classList.add("fade-out");
-                await new Promise(resolve => setTimeout(resolve, 600));
                 this.animate_lines_in();
                 status.textContent = "listening...";
                 return;
             }
 
             try {
-                // Step 1: Request audio first (this shows the browser prompt)
+                // Request audio (shows browser prompt)
                 status.textContent = "please select a window/tab and enable audio sharing...";
 
                 this.stream = await navigator.mediaDevices.getDisplayMedia({
@@ -316,16 +712,10 @@
                     return;
                 }
 
-                // Step 2: Button fade out after selection
-                btn.classList.add("fade-out");
-
-                // Step 3: Wait for button to disappear
-                await new Promise(resolve => setTimeout(resolve, 600));
-
-                // Step 4: Animate lines expanding from center
+                // Animate lines expanding from center
                 this.animate_lines_in();
 
-                // Step 5: Setup audio context
+                // Setup audio context
                 this.audio_ctx = new AudioContext();
                 const source = this.audio_ctx.createMediaStreamSource(
                     new MediaStream([audio_track])
@@ -343,7 +733,6 @@
                 audio_track.onended = () => {
                     cancelAnimationFrame(this.anim_id);
                     status.textContent = "audio stopped";
-                    btn.classList.remove("fade-out");
                     this.stream = null;
                     // Hide timer and controls
                     document.getElementById('timer-container').classList.remove('visible');
@@ -356,7 +745,6 @@
                 };
             } catch (e) {
                 status.textContent = "failed: " + e.message;
-                btn.classList.remove("fade-out");
             }
         },
 
@@ -393,6 +781,59 @@
             loop();
         }
     };
+    // Welcome overlay logic
+    const welcomeOverlay = document.getElementById('welcome-overlay');
+    const welcomeImg = document.getElementById('welcome-img');
+    const welcomeGlow = document.getElementById('welcome-glow');
+    const welcomeBadge = document.getElementById('welcome-badge');
+    const welcomeEyebrow = document.getElementById('welcome-eyebrow');
+    const welcomeTitle = document.getElementById('welcome-title');
+    const welcomeSubtitle = document.getElementById('welcome-subtitle');
+    const welcomeCta = document.getElementById('welcome-cta');
+    const welcomeDivider = document.getElementById('welcome-divider');
+    const welcomeCorner = document.getElementById('welcome-corner');
+    let welcomeActive = true;
+
+    function revealWelcome() {
+        welcomeGlow.classList.add('visible');
+        welcomeBadge.classList.add('visible');
+        welcomeEyebrow.classList.add('visible');
+        welcomeTitle.classList.add('visible');
+        welcomeSubtitle.classList.add('visible');
+        welcomeCta.classList.add('visible');
+        welcomeDivider.classList.add('visible');
+        welcomeCorner.classList.add('visible');
+    }
+
+    if (welcomeImg.complete) {
+        welcomeImg.classList.add('loaded');
+        revealWelcome();
+    } else {
+        welcomeImg.addEventListener('load', () => {
+            welcomeImg.classList.add('loaded');
+            revealWelcome();
+        });
+        welcomeImg.addEventListener('error', () => {
+            welcomeImg.style.opacity = '0';
+            revealWelcome();
+        });
+    }
+
+    welcomeOverlay.addEventListener('click', () => {
+        if (!welcomeActive) return;
+        welcomeActive = false;
+        welcomeOverlay.classList.add('exiting');
+        setTimeout(() => {
+            welcomeOverlay.classList.add('hidden');
+        }, 900);
+    });
+
+    // Prevent body clicks from firing while welcome is active
+    document.body.addEventListener('click', (e) => {
+        if (welcomeActive && welcomeOverlay.contains(e.target)) return;
+        if (welcomeActive) e.stopImmediatePropagation();
+    }, true);
+
     audio_wave.init();
 
     // Pomodoro Timer
