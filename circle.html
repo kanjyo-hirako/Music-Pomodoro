@@ -253,6 +253,290 @@
         box-shadow: none;
     }
 
+    /* ========== Right Panel ========== */
+    .right-panel {
+        position: fixed;
+        top: 35%;
+        right: 3rem;
+        transform: translateY(-50%) translateX(30px);
+        width: 38rem;
+        max-height: 80vh;
+        z-index: 12;
+        display: flex;
+        flex-direction: column;
+        gap: 1.2rem;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.8s ease, transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .right-panel.visible {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(-50%) translateX(0);
+    }
+
+    .panel-card {
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(213, 201, 184, 0.5);
+        border-radius: 1rem;
+        padding: 1.6rem 2rem;
+        box-shadow:
+            0 2px 8px rgba(100, 80, 60, 0.06),
+            0 8px 32px rgba(100, 80, 60, 0.04);
+        transition: box-shadow 0.3s ease;
+    }
+
+    .panel-card:hover {
+        box-shadow:
+            0 4px 12px rgba(100, 80, 60, 0.08),
+            0 12px 40px rgba(100, 80, 60, 0.06);
+    }
+
+    .panel-card-title {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #6a5e4e;
+        letter-spacing: 0.4rem;
+        text-transform: uppercase;
+        margin-bottom: 1.2rem;
+        padding-bottom: 0.8rem;
+        border-bottom: 1px solid rgba(213, 201, 184, 0.4);
+    }
+
+    /* -- Timer Presets -- */
+    .preset-card {
+        flex-shrink: 0;
+    }
+
+    .preset-row {
+        display: flex;
+        gap: 0.8rem;
+    }
+
+    .preset-btn {
+        flex: 1;
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-style: italic;
+        font-weight: 500;
+        font-size: 1.5rem;
+        padding: 0.9rem 0.6rem;
+        color: #6a5e4e;
+        background: transparent;
+        border: 1px solid rgba(213, 201, 184, 0.6);
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        letter-spacing: 0.1rem;
+        text-align: center;
+        white-space: nowrap;
+    }
+
+    .preset-btn:hover {
+        background: rgba(245, 240, 232, 0.6);
+        border-color: #8a7e6e;
+    }
+
+    .preset-btn.active {
+        background: #3a3028;
+        color: #f5f0e8;
+        border-color: #3a3028;
+        box-shadow: 0 2px 8px rgba(58, 48, 40, 0.2);
+    }
+
+    .preset-label {
+        display: block;
+        font-size: 1rem;
+        font-style: normal;
+        color: #a09585;
+        margin-top: 0.2rem;
+        letter-spacing: 0.08rem;
+    }
+
+    .preset-btn.active .preset-label {
+        color: rgba(245, 240, 232, 0.7);
+    }
+
+    /* -- Todo List -- */
+    .todo-card {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .todo-input-row {
+        display: flex;
+        gap: 0.8rem;
+        margin-bottom: 1rem;
+    }
+
+    .todo-input {
+        flex: 1;
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-size: 1.5rem;
+        padding: 0.9rem 1.2rem;
+        color: #3a3028;
+        background: rgba(245, 240, 232, 0.5);
+        border: 1px solid rgba(213, 201, 184, 0.5);
+        border-radius: 0.5rem;
+        outline: none;
+        transition: border-color 0.25s ease, background 0.25s ease;
+    }
+
+    .todo-input::placeholder {
+        color: #b5a998;
+        font-style: italic;
+    }
+
+    .todo-input:focus {
+        border-color: #8a7e6e;
+        background: rgba(255, 255, 255, 0.8);
+    }
+
+    .todo-add-btn {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-weight: 600;
+        font-size: 1.8rem;
+        width: 3.8rem;
+        height: 3.8rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #f5f0e8;
+        background: #3a3028;
+        border: none;
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        flex-shrink: 0;
+    }
+
+    .todo-add-btn:hover {
+        background: #5a4e3e;
+        transform: translateY(-1px);
+        box-shadow: 0 3px 8px rgba(58, 48, 40, 0.2);
+    }
+
+    .todo-list {
+        list-style: none;
+        max-height: 50vh;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(213, 201, 184, 0.5) transparent;
+    }
+
+    .todo-list::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .todo-list::-webkit-scrollbar-thumb {
+        background: rgba(213, 201, 184, 0.5);
+        border-radius: 2px;
+    }
+
+    .todo-item {
+        display: flex;
+        align-items: center;
+        gap: 0.9rem;
+        padding: 0.9rem 0;
+        border-bottom: 1px solid rgba(213, 201, 184, 0.25);
+        animation: todoSlideIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        opacity: 0;
+        transform: translateY(-8px);
+    }
+
+    @keyframes todoSlideIn {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .todo-item:last-child {
+        border-bottom: none;
+    }
+
+    .todo-checkbox {
+        width: 1.7rem;
+        height: 1.7rem;
+        border: 1.5px solid #c5b9a8;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: transparent;
+    }
+
+    .todo-checkbox:hover {
+        border-color: #8a7e6e;
+        transform: scale(1.1);
+    }
+
+    .todo-checkbox.checked {
+        background: #3a3028;
+        border-color: #3a3028;
+    }
+
+    .todo-checkbox.checked::after {
+        content: "";
+        width: 0.55rem;
+        height: 0.28rem;
+        border-left: 1.5px solid #f5f0e8;
+        border-bottom: 1.5px solid #f5f0e8;
+        transform: rotate(-45deg) translateY(-1px);
+    }
+
+    .todo-text {
+        flex: 1;
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-size: 1.5rem;
+        color: #3a3028;
+        transition: all 0.3s ease;
+        line-height: 1.3;
+        word-break: break-word;
+        overflow-wrap: break-word;
+    }
+
+    .todo-text.done {
+        text-decoration: line-through;
+        color: #b5a998;
+    }
+
+    .todo-delete {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-size: 1.7rem;
+        color: #c5b9a8;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.2rem 0.5rem;
+        opacity: 0;
+        transition: all 0.2s ease;
+        flex-shrink: 0;
+    }
+
+    .todo-item:hover .todo-delete {
+        opacity: 1;
+    }
+
+    .todo-delete:hover {
+        color: #8b4513;
+    }
+
+    .todo-empty {
+        font-family: 'Cormorant Garamond', Georgia, serif;
+        font-style: italic;
+        font-size: 1.4rem;
+        color: #b5a998;
+        text-align: center;
+        padding: 1.5rem 0;
+    }
+
     /* Paper grain texture overlay — now handled by .noise-overlay div */
 
     /* ========== Welcome Overlay ========== */
@@ -657,6 +941,40 @@
         <button class="timer-btn" id="timer-reset">Reset</button>
     </div>
 
+    <!-- Right Panel -->
+    <div class="right-panel" id="right-panel">
+        <!-- Duration -->
+        <div class="panel-card preset-card">
+            <div class="panel-card-title">Duration</div>
+            <div class="preset-row" id="preset-row">
+                <button class="preset-btn active" data-minutes="25">
+                    25<span class="preset-label">focus</span>
+                </button>
+                <button class="preset-btn" data-minutes="15">
+                    15<span class="preset-label">short</span>
+                </button>
+                <button class="preset-btn" data-minutes="5">
+                    5<span class="preset-label">break</span>
+                </button>
+                <button class="preset-btn" data-minutes="50">
+                    50<span class="preset-label">deep</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Todo List -->
+        <div class="panel-card todo-card">
+            <div class="panel-card-title">Today</div>
+            <div class="todo-input-row">
+                <input type="text" class="todo-input" id="todo-input" placeholder="what needs doing..." maxlength="60">
+                <button class="todo-add-btn" id="todo-add">+</button>
+            </div>
+            <ul class="todo-list" id="todo-list">
+                <li class="todo-empty" id="todo-empty">no tasks yet</li>
+            </ul>
+        </div>
+    </div>
+
     <div id="status"></div>
 </body>
 <script>
@@ -734,9 +1052,10 @@
                     cancelAnimationFrame(this.anim_id);
                     status.textContent = "audio stopped";
                     this.stream = null;
-                    // Hide timer and controls
+                    // Hide timer, controls, and right panel
                     document.getElementById('timer-container').classList.remove('visible');
                     document.getElementById('timer-controls').classList.remove('visible');
+                    document.getElementById('right-panel').classList.remove('visible');
                     // Reset lines
                     this.lines.forEach(line => {
                         line.classList.remove("visible");
@@ -758,10 +1077,11 @@
                 }, i * 15);
             });
 
-            // Show timer and controls after animation
+            // Show timer, controls, and right panel after animation
             setTimeout(() => {
                 document.getElementById('timer-container').classList.add('visible');
                 document.getElementById('timer-controls').classList.add('visible');
+                document.getElementById('right-panel').classList.add('visible');
             }, this.lines_total * 15 + 500);
         },
 
@@ -838,7 +1158,7 @@
 
     // Pomodoro Timer
     const pomodoro = {
-        duration: 25 * 60, // 25 minutes in seconds
+        duration: 25 * 60,
         remaining: 25 * 60,
         interval: null,
         isRunning: false,
@@ -852,13 +1172,26 @@
             document.getElementById('timer-pause').onclick = () => this.pause();
             document.getElementById('timer-reset').onclick = () => this.reset();
 
+            // Preset buttons
+            document.querySelectorAll('.preset-btn').forEach(btn => {
+                btn.onclick = () => this.setPreset(parseInt(btn.dataset.minutes), btn);
+            });
+
+            this.updateDisplay();
+        },
+
+        setPreset(minutes, btn) {
+            if (this.isRunning) return;
+            document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            this.duration = minutes * 60;
+            this.remaining = this.duration;
             this.updateDisplay();
         },
 
         start() {
             if (this.isRunning) return;
             this.isRunning = true;
-            this.controls.classList.add('visible');
 
             this.interval = setInterval(() => {
                 this.remaining--;
@@ -883,11 +1216,18 @@
 
         complete() {
             this.pause();
+
             // Flash effect
             this.display.style.color = '#8b4513';
             setTimeout(() => {
                 this.display.style.color = '#3a3028';
             }, 2000);
+
+            // Auto-reset after flash
+            setTimeout(() => {
+                this.remaining = this.duration;
+                this.updateDisplay();
+            }, 2500);
         },
 
         updateDisplay() {
@@ -897,7 +1237,99 @@
         }
     };
 
+    // Todo List
+    const todoList = {
+        items: [],
+
+        init() {
+            this.list = document.getElementById('todo-list');
+            this.input = document.getElementById('todo-input');
+            this.emptyMsg = document.getElementById('todo-empty');
+
+            document.getElementById('todo-add').onclick = () => this.add();
+            this.input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') this.add();
+            });
+
+            this.load();
+        },
+
+        add() {
+            const text = this.input.value.trim();
+            if (!text) return;
+
+            const item = { id: Date.now(), text, done: false };
+            this.items.push(item);
+            this.input.value = '';
+            this.render();
+            this.save();
+        },
+
+        toggle(id) {
+            const item = this.items.find(i => i.id === id);
+            if (item) {
+                item.done = !item.done;
+                this.render();
+                this.save();
+            }
+        },
+
+        remove(id) {
+            this.items = this.items.filter(i => i.id !== id);
+            this.render();
+            this.save();
+        },
+
+        render() {
+            this.list.innerHTML = '';
+
+            if (this.items.length === 0) {
+                this.list.innerHTML = '<li class="todo-empty">no tasks yet</li>';
+                return;
+            }
+
+            this.items.forEach((item, i) => {
+                const li = document.createElement('li');
+                li.className = 'todo-item';
+                li.style.animationDelay = `${i * 0.05}s`;
+
+                const checkbox = document.createElement('div');
+                checkbox.className = `todo-checkbox${item.done ? ' checked' : ''}`;
+                checkbox.onclick = () => this.toggle(item.id);
+
+                const text = document.createElement('span');
+                text.className = `todo-text${item.done ? ' done' : ''}`;
+                text.textContent = item.text;
+
+                const del = document.createElement('button');
+                del.className = 'todo-delete';
+                del.textContent = '×';
+                del.onclick = () => this.remove(item.id);
+
+                li.appendChild(checkbox);
+                li.appendChild(text);
+                li.appendChild(del);
+                this.list.appendChild(li);
+            });
+        },
+
+        save() {
+            try { localStorage.setItem('pomodoro-todos', JSON.stringify(this.items)); } catch(e) {}
+        },
+
+        load() {
+            try {
+                const saved = localStorage.getItem('pomodoro-todos');
+                if (saved) {
+                    this.items = JSON.parse(saved);
+                    this.render();
+                }
+            } catch(e) {}
+        }
+    };
+
     pomodoro.init();
+    todoList.init();
 </script>
 
 </html>
